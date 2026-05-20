@@ -1,22 +1,105 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #1a1a1a;
+  --surface: #f3f4f6;
+  --border: #e5e7eb;
+  --text-secondary: #6b7280;
+  --card: #ffffff;
+  --card-alt: #f9fafb;
+
+  --success: #16a34a;
+  --success-muted: #f0fdf4;
+  --success-border: #bbf7d0;
+  --danger: #dc2626;
+  --danger-muted: #fef2f2;
+  --danger-border: #fecaca;
+  --warning: #d97706;
+  --warning-muted: #fffbeb;
+  --warning-border: #fde68a;
+  --info: #2563eb;
+  --info-muted: #eff6ff;
+  --info-border: #bfdbfe;
+  --accent: #7c3aed;
+  --accent-muted: #f5f3ff;
+
+  --keypoint-bg: #fffbeb;
+  --keypoint-border: #fbbf24;
+  --keypoint-text: #78350f;
+  --example-bg: rgba(239, 246, 255, 0.5);
+  --example-border: #bfdbfe;
+  --example-label: #2563eb;
+  --example-text: #1e3a5f;
+  --diagram-bg: #111827;
+  --diagram-text: #34d399;
+
+  --central-bank: #6366f1;
+  --commercial-bank: #2563eb;
+  --business: #16a34a;
+  --consumer: #d97706;
+  --government: #dc2626;
+  --resource: #7c3aed;
+
+  --flow-wage: #16a34a;
+  --flow-loan: #2563eb;
+  --flow-tax: #dc2626;
+  --flow-print: #d97706;
+  --flow-spend: #7c3aed;
+  --flow-interest: #ea580c;
+  --flow-deposit: #0891b2;
+  --flow-purchase: #16a34a;
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0f;
+  --foreground: #e5e5e5;
+  --surface: #1a1a1a;
+  --border: #2e2e2e;
+  --text-secondary: #9ca3af;
+  --card: #171717;
+  --card-alt: #1f1f1f;
+
+  --success: #4ade80;
+  --success-muted: #052e16;
+  --success-border: #14532d;
+  --danger: #f87171;
+  --danger-muted: #450a0a;
+  --danger-border: #7f1d1d;
+  --warning: #fbbf24;
+  --warning-muted: #422006;
+  --warning-border: #713f12;
+  --info: #60a5fa;
+  --info-muted: #172554;
+  --info-border: #1e3a5f;
+  --accent: #a78bfa;
+  --accent-muted: #2e1065;
+
+  --keypoint-bg: #422006;
+  --keypoint-border: #b45309;
+  --keypoint-text: #fde68a;
+  --example-bg: rgba(23, 37, 84, 0.5);
+  --example-border: #1e3a5f;
+  --example-label: #60a5fa;
+  --example-text: #bfdbfe;
+  --diagram-bg: #0a0a0a;
+  --diagram-text: #34d399;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-text-secondary: var(--text-secondary);
+  --color-central-bank: var(--central-bank);
+  --color-commercial-bank: var(--commercial-bank);
+  --color-business: var(--business);
+  --color-consumer: var(--consumer);
+  --color-government: var(--government);
+  --color-resource: var(--resource);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {

@@ -85,6 +85,13 @@ const topics = [
     icon: '🇨🇱',
     era: 'Análisis aplicado',
   },
+  {
+    id: 'diagramas-economia',
+    title: 'Diagramas: Bueno vs Malo',
+    description: 'Todos los actores y sus relaciones en un solo diagrama — circuito sano vs Chile actual.',
+    icon: '🗺️',
+    era: 'Vista completa',
+  },
 ];
 
 export default function LearnPage() {

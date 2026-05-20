@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import FloatingThemeToggle from '@/components/ui/FloatingThemeToggle';
 import CircuitoChile from '@/components/learn/CircuitoChile';
+import DiagramasEconomia from '@/components/learn/DiagramasEconomia';
 
 type ContentBlock =
   | { type: 'paragraph'; text: string }
@@ -1806,7 +1807,12 @@ function BlockRenderer({ block }: { block: ContentBlock }) {
 export default async function TopicPage({ params }: { params: Promise<{ topic: string }> }) {
   const { topic } = await params;
 
-  if (topic === 'circuito-chile') {
+  const CUSTOM_TOPICS: Record<string, React.ReactNode> = {
+    'circuito-chile': <CircuitoChile />,
+    'diagramas-economia': <DiagramasEconomia />,
+  };
+
+  if (topic in CUSTOM_TOPICS) {
     return (
       <main className="min-h-screen bg-[var(--background)] py-12 px-6">
         <FloatingThemeToggle />
@@ -1814,7 +1820,7 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
           <Link href="/learn" className="text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] mb-6 block">
             ← Volver a Aprender
           </Link>
-          <CircuitoChile />
+          {CUSTOM_TOPICS[topic]}
           <div className="mt-12 p-6 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
             <p className="text-sm font-medium mb-2">Practica este concepto</p>
             <p className="text-xs text-[var(--text-secondary)] mb-4">

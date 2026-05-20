@@ -53,7 +53,7 @@ function Node({ node }: { node: NodeDef }) {
 
   return (
     <div
-      className="absolute rounded-xl"
+      className="absolute"
       style={{
         left: node.x,
         top: node.y,
@@ -61,6 +61,7 @@ function Node({ node }: { node: NodeDef }) {
         padding: node.num ? '13px 16px 13px 48px' : '13px 16px',
         background: s.bg,
         border: isDashed ? `1.5px dashed ${s.border}` : `1px solid ${s.border}`,
+        borderRadius: 11,
         boxShadow: node.hub
           ? node.variant === 'coral'
             ? '0 0 0 4px rgba(245,196,179,0.45)'
@@ -71,20 +72,19 @@ function Node({ node }: { node: NodeDef }) {
     >
       {node.num !== undefined && (
         <div
-          className="absolute top-3 left-3.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-extrabold"
-          style={{ background: NUM_COLORS[node.numColor || 'n'] }}
+          className="absolute flex items-center justify-center text-white font-extrabold"
+          style={{ top: 12, left: 14, width: 24, height: 24, borderRadius: '50%', fontSize: 12, background: NUM_COLORS[node.numColor || 'n'] }}
         >
           {node.num}
         </div>
       )}
       <h3
-        className="text-[13.5px] font-bold mb-1 leading-tight"
-        style={{ color: s.h3 }}
+        className="font-bold leading-[1.25]"
+        style={{ color: s.h3, fontSize: '13.5px', marginBottom: 5, letterSpacing: '-0.005em' }}
         dangerouslySetInnerHTML={{ __html: node.title }}
       />
       <p
-        className="text-[12.2px] leading-[1.5]"
-        style={{ color: s.p }}
+        style={{ color: s.p, fontSize: '12.2px', lineHeight: 1.5 }}
         dangerouslySetInnerHTML={{ __html: node.body }}
       />
     </div>
@@ -274,19 +274,19 @@ function ResetCards() {
   return (
     <div className="absolute" style={{ left: 60, top: 2080, width: 1180, zIndex: 2 }}>
       <div
-        className="rounded-xl"
         style={{
           padding: '13px 16px 13px 48px',
           background: NODE_STYLES.neutral.bg,
           border: `1px solid ${NODE_STYLES.neutral.border}`,
+          borderRadius: 11,
           position: 'relative',
         }}
       >
-        <div className="absolute top-3 left-3.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-extrabold" style={{ background: '#5F5E5A' }}>8</div>
-        <h3 className="text-[13.5px] font-bold mb-1 leading-tight" style={{ color: NODE_STYLES.neutral.h3 }}>
+        <div className="absolute flex items-center justify-center text-white font-extrabold" style={{ top: 12, left: 14, width: 24, height: 24, borderRadius: '50%', fontSize: 12, background: '#5F5E5A' }}>8</div>
+        <h3 className="font-bold leading-[1.25]" style={{ color: NODE_STYLES.neutral.h3, fontSize: '13.5px', marginBottom: 5, letterSpacing: '-0.005em' }}>
           ¿Hay resets históricos más profundos?
         </h3>
-        <p className="text-[12.2px] leading-[1.5] mb-3" style={{ color: NODE_STYLES.neutral.p }}>
+        <p style={{ color: NODE_STYLES.neutral.p, fontSize: '12.2px', lineHeight: 1.5, marginBottom: 12 }}>
           Cuando la acumulación de deuda no encuentra salida gradual, la historia registra tres mecanismos de reset:
         </p>
         <div className="grid grid-cols-3 gap-3.5">
@@ -312,7 +312,7 @@ export default function DiagramasEconomia() {
   const panelFill = '#faf9f6';
 
   return (
-    <div className="max-w-[1320px] mx-auto">
+    <div className="max-w-[1320px] mx-auto" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif' }}>
       <h1 className="text-[28px] font-extrabold tracking-tight text-[var(--foreground)] mb-1.5">
         El circuito económico — diagrama bueno vs diagrama malo
       </h1>

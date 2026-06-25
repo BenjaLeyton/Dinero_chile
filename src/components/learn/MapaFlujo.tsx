@@ -189,6 +189,23 @@ const FLOWS: Flow[] = [
   { from: 'casino', to: 'sharebet', amount: 'sponsorship $5M', kind: 'mio', label: 'El casino patrocina tu app ShareBet', ch: ['mio', 'todo'], width: 3 },
 ];
 
+// ──────────────── POR QUÉ EL OLIGOPOLIO NUNCA QUIEBRA ────────────────
+const OLIGO_STEPS: { n: number; title: string; money: string; color: string; text: string }[] = [
+  { n: 1, title: 'Pide el préstamo', money: '+$500M', color: '#2563eb', text: 'El banco le presta $500M a Falabella. Es dinero creado como deuda, de la nada.' },
+  { n: 2, title: 'Lo gasta — y de paso paga a otras empresas', money: '−$500M', color: '#d97706', text: '$300M en sueldos a NPCs, $30M en marketing a la agencia, $170M en combustible e insumos a Copec y al importador. El gasto de Falabella es el ingreso de las otras.' },
+  { n: 3, title: 'El dinero vuelve a los NPCs', money: '→ NPCs', color: '#16a34a', text: 'Los sueldos de Falabella Y de las otras empresas llegan a los NPCs. Sumando todo el oligopolio, los NPCs reciben mucho más que lo que pagó Falabella sola.' },
+  { n: 4, title: 'Los NPCs lo gastan casi todo', money: '+$400M', color: '#16a34a', text: 'No pueden parar de comprar. Esa plata vuelve a Falabella como ventas (+$400M), y el resto va a Cencosud y Copec — sus socias del club.' },
+  { n: 5, title: 'Devuelve el préstamo', money: '−$540M', color: '#dc2626', text: 'Con esas ventas paga los $500M + $40M de interés. La deuda anterior queda saldada. El banco ganó su interés.' },
+  { n: 6, title: 'Pide uno más grande', money: '+$700M', color: '#2563eb', text: 'Mostró ventas crecientes → el banco le presta $700M. El ciclo arranca de nuevo, más grande. Así se ve el "préstamo casi infinito".' },
+];
+
+const OLIGO_WEB: { title: string; text: string }[] = [
+  { title: 'Se compran entre ellas', text: 'Falabella le compra combustible a Copec, todas le pagan marketing a la agencia, Cencosud les arrienda locales. El gasto de una es el ingreso de otra: así cada una junta para pagar su propia deuda.' },
+  { title: 'Comparten el mismo bolsillo: los NPCs', text: 'Las 3 grandes inyectan juntas ~$900M en sueldos al mes. Los NPCs gastan esos $900M de vuelta, repartidos entre las 3. El dinero nunca sale del club.' },
+  { title: 'La AFP las capitaliza con plata de los NPCs', text: 'Con el 10% forzoso, la AFP compra acciones de las 3 → suben de valor → mejor garantía → el banco les presta aún más. El propio trabajador infla a su jefe.' },
+  { title: 'El banco gana pase lo que pase', text: 'Le cobra interés a todas. No le importa cuál crece más: mientras el dinero circule entre ellas y siempre vuelva, sus intereses están asegurados.' },
+];
+
 // ──────────────── QUÉ PUEDEN HACER LOS NPCs ────────────────
 const NPC_ACTIONS: { n: number; title: string; text: string }[] = [
   {
@@ -573,6 +590,83 @@ export default function MapaFlujo() {
           el final del flujo (un NPC más) y montas algo —como una app— por donde ese mismo dinero pasa hacia ti.
         </p>
       </div>
+
+      {/* ─── POR QUÉ EL OLIGOPOLIO NUNCA QUIEBRA ─── */}
+      <section className="mt-14 pt-8 border-t border-[var(--border)]">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)] mb-2">
+          La deuda que se pagan entre ellos
+        </div>
+        <h2 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
+          ¿Por qué el oligopolio nunca quiebra?
+        </h2>
+        <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-7 max-w-3xl">
+          Cada empresa pide préstamos gigantes una y otra vez. ¿Cómo los devuelven y piden otro mayor, sin caer
+          jamás? El truco: <strong className="text-[var(--foreground)]">el gasto de una empresa es el ingreso de
+          otra</strong>, y al final todo vuelve por el consumo obligatorio de los NPCs. Sigámoslo con números.
+        </p>
+
+        {/* ciclo de una empresa */}
+        <h3 className="text-base font-bold text-[var(--foreground)] mb-3">El ciclo de UNA empresa (Falabella)</h3>
+        <div className="space-y-2.5 mb-9">
+          {OLIGO_STEPS.map((s) => (
+            <div key={s.n} className="flex gap-3 items-start p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
+              <span className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-white text-sm font-extrabold" style={{ background: s.color }}>
+                {s.n}
+              </span>
+              <div className="flex-1">
+                <div className="flex items-center justify-between gap-2 mb-0.5">
+                  <h4 className="text-sm font-bold text-[var(--foreground)]">{s.title}</h4>
+                  <span className="text-sm font-extrabold px-2 py-0.5 rounded-md text-white whitespace-nowrap" style={{ background: s.color }}>
+                    {s.money}
+                  </span>
+                </div>
+                <p className="text-[13px] leading-relaxed text-[var(--text-secondary)]">{s.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* la telaraña entre todas */}
+        <h3 className="text-base font-bold text-[var(--foreground)] mb-1.5">Cómo se sostienen TODAS juntas</h3>
+        <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed mb-4 max-w-3xl">
+          Ninguna sobrevive sola. Son clientas y proveedoras unas de otras, así que la misma plata circula entre
+          ellas y paga la deuda de todas:
+        </p>
+        <div className="grid sm:grid-cols-2 gap-3 mb-9">
+          {OLIGO_WEB.map((w, i) => (
+            <div key={i} className="p-4 rounded-xl" style={{ background: '#f7f3ff', border: '1px solid #7F77DD' }}>
+              <h4 className="text-sm font-bold mb-0.5" style={{ color: '#26215C' }}>{w.title}</h4>
+              <p className="text-[13px] leading-relaxed" style={{ color: '#3C3489' }}>{w.text}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* cuentas del club */}
+        <div className="rounded-xl p-5 mb-3" style={{ background: '#EAF3DE', border: '1px solid #3B6D11' }}>
+          <h4 className="text-sm font-bold mb-2" style={{ color: '#0d2002' }}>Las cuentas del club, en un mes</h4>
+          <div className="space-y-1.5 text-[13px]" style={{ color: '#173404' }}>
+            <div className="flex justify-between gap-3"><span>Sueldos que inyectan las 3 grandes</span><span className="font-bold font-mono">$900M</span></div>
+            <div className="flex justify-between gap-3"><span>Los NPCs lo gastan de vuelta entre las 3</span><span className="font-bold font-mono">$900M</span></div>
+            <div className="flex justify-between gap-3"><span>Lo que se compran entre ellas (combustible, insumos, marketing, arriendos)</span><span className="font-bold font-mono">+$450M</span></div>
+            <div className="flex justify-between gap-3 pt-1.5 border-t" style={{ borderColor: '#3B6D1133' }}><span className="font-bold">Total que circula y vuelve al club</span><span className="font-extrabold font-mono">$1.350M</span></div>
+          </div>
+          <p className="text-[12.5px] mt-2 leading-relaxed" style={{ color: '#173404' }}>
+            Suficiente para que cada una devuelva su préstamo, le pague el interés al banco, y muestre números para
+            pedir uno mayor. La deuda no se "extingue": se <strong>refinancia</strong> sin parar con dinero nuevo
+            (crédito + recursos) mientras la rueda gire.
+          </p>
+        </div>
+
+        {/* clave */}
+        <div className="rounded-xl p-5" style={{ background: 'var(--keypoint-bg)', border: '1px solid var(--keypoint-border)' }}>
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--keypoint-text)' }}>
+            <strong>Por eso nunca quiebran:</strong> mientras los NPCs sigan comprando, el dinero siempre vuelve.
+            Cada deuda se paga con el gasto de las otras + el consumo obligatorio de la gente. Es un club cerrado
+            donde la plata circula entre las mismas manos y siempre termina en el banco como interés. El único punto
+            donde la rueda se puede frenar es el consumo de los NPCs — que es justo de lo que trata lo que sigue. 👇
+          </p>
+        </div>
+      </section>
 
       {/* ─── QUÉ PUEDEN HACER LOS NPCs ─── */}
       <section className="mt-14 pt-8 border-t border-[var(--border)]">

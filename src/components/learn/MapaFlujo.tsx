@@ -66,7 +66,7 @@ const ENTITIES: Ent[] = [
   { id: 'export', label: 'Exportación', icon: '🚢', group: 'recurso', x: 480, y: 320, w: 150, desc: 'Convierte recursos en dólares que entran a la economía.', metrics: [['Divisas/año', 'US$95.000M']] },
   { id: 'gobierno', label: 'Gobierno', icon: '🏛️', group: 'estado', x: 1120, y: 150, w: 150, desc: 'Cobra impuestos y royalty. Gasta en bonos y sueldos públicos.', metrics: [['IVA', '19%'], ['Gasto', '~25% PIB']] },
   { id: 'central', label: 'Banco Central', icon: '🏦', group: 'estado', x: 1650, y: 130, w: 160, desc: 'Imprime y regula el dinero. Fija la tasa de interés y le presta a los bancos.', metrics: [['Tasa', '5,0%']] },
-  { id: 'bancos', label: 'Bancos · Chile · Santander · BCI · Estado · Scotiabank · Itaú', icon: '💳', group: 'banca', x: 1980, y: 330, w: 210, desc: 'Banco de Chile, Santander, BCI, BancoEstado, Scotiabank, Itaú. Crean dinero como deuda, prestan a empresas y NPCs, y ganan con el interés.', metrics: [['Tasa consumo', '25–35%'], ['Ganancia', 'récord anual']] },
+  { id: 'bancos', label: 'Bancos · Chile · Santander · BCI · Estado · Scotiabank · Itaú', icon: '💳', group: 'banca', x: 1980, y: 330, w: 210, desc: 'Banco de Chile, Santander, BCI, BancoEstado, Scotiabank, Itaú. Crean dinero como deuda, prestan a empresas y NPCs, y ganan con el interés. También ganan con las exportaciones: cambian los dólares del exportador a pesos (se quedan una comisión / spread) y prestan esos depósitos a interés.', metrics: [['Tasa consumo', '25–35%'], ['Comisión FX', 'por cada cambio'], ['Ganancia', 'récord anual']] },
   { id: 'afp', label: 'AFP', icon: '📉', group: 'banca', x: 2360, y: 210, w: 140, desc: 'Administra el 10% forzoso de cada sueldo. Lo invierte comprando acciones de las grandes empresas.', metrics: [['Forzoso', '10%']] },
 
   { id: 'constructora', label: 'Constructora', icon: '🏗️', group: 'empresa', x: 380, y: 650, w: 150, desc: 'Necesita grandes préstamos para operar y contrata muchos NPCs. Si el crédito se corta, despide.', metrics: [['Depende de', 'crédito']] },
@@ -79,23 +79,24 @@ const ENTITIES: Ent[] = [
   { id: 'agencia', label: 'Agencia Marketing', icon: '📣', group: 'marketing', x: 950, y: 940, w: 170, desc: 'Falabella le paga campañas. Ella reparte ese dinero a influencers y productoras.', metrics: [['Cobra', '$5–50M/campaña']] },
   { id: 'productora', label: 'Productora', icon: '🎬', group: 'marketing', x: 1380, y: 980, w: 150, desc: 'Graba los comerciales. Contrata NPCs (actores, editores) por proyecto.', metrics: [] },
 
-  { id: 'gymapp', label: 'Tu App · Gym', icon: '💪', group: 'mio', x: 1780, y: 1180, w: 150, desc: 'Miles de NPCs pagan suscripción a la vez sin que tú estés en cada venta. Solo cobra a NPCs. Escala.', metrics: [['Cobra a', 'NPCs'], ['Modelo', 'suscripción']] },
-  { id: 'sharebet', label: 'Tu App · ShareBet', icon: '📲', group: 'mio', x: 2230, y: 1200, w: 160, desc: 'Miles de NPCs pagan por usar tu app. Ese flujo entra directo a ti.', metrics: [['Cobra a', 'NPCs']] },
-  { id: 'consultora', label: 'Tu Consultora', icon: '💼', group: 'mio', x: 1600, y: 1330, w: 160, desc: 'Tu empresa que le vende servicios y asesoría a las grandes empresas. Otra fuente de flujo hacia ti, esta vez B2B (te pagan las empresas, no los NPCs).', metrics: [['Cobra a', 'empresas'], ['Modelo', 'servicios']] },
-  { id: 'tu', label: 'TÚ (dueño)', icon: '🧠', group: 'mio', x: 2010, y: 1430, w: 150, desc: 'Dueño de negocios que captan el flujo. El dinero de NPCs (apps) y de empresas (consultora) desemboca en ti — y el banco empieza a prestarte.', metrics: [['Techo', 'sin límite']] },
+  { id: 'tu', label: 'TÚ (dueño)', icon: '🧠', group: 'mio', x: 1880, y: 1120, w: 150, desc: 'Dueño de negocios que captan el flujo. El dinero de NPCs (apps), de empresas (consultora) y del casino (sponsorship a tu ShareBet) desemboca en ti — y el banco empieza a prestarte. Tus negocios cuelgan abajo a la derecha.', metrics: [['Techo', 'sin límite']] },
+  { id: 'gymapp', label: 'Tu App · Gym', icon: '💪', group: 'mio', x: 2120, y: 1300, w: 150, desc: 'Miles de NPCs pagan suscripción a la vez sin que tú estés en cada venta. Solo cobra a NPCs. Escala.', metrics: [['Cobra a', 'NPCs'], ['Modelo', 'suscripción']] },
+  { id: 'sharebet', label: 'Tu App · ShareBet', icon: '📲', group: 'mio', x: 2400, y: 1300, w: 160, desc: 'Miles de NPCs pagan por usar tu app, y el casino la patrocina (sponsorship). Todo ese flujo entra a ti.', metrics: [['Cobra a', 'NPCs'], ['Patrocina', 'el casino']] },
+  { id: 'consultora', label: 'Tu Consultora', icon: '💼', group: 'mio', x: 2120, y: 1500, w: 160, desc: 'Tu empresa que le vende servicios y asesoría a las grandes empresas. Otra fuente de flujo hacia ti, esta vez B2B (te pagan las empresas, no los NPCs).', metrics: [['Cobra a', 'empresas'], ['Modelo', 'servicios']] },
+  { id: 'casino', label: 'Casino', icon: '🎰', group: 'empresa', x: 2430, y: 1520, w: 150, desc: 'Casa de apuestas. Gana porque los NPCs pierden más de lo que ganan (la casa siempre gana). Con esa plata patrocina tu app ShareBet, y también paga premios e impuestos.', metrics: [['Ingreso', 'apuestas de NPCs'], ['Patrocina', 'tu ShareBet']] },
 
   { id: 'influencer', label: 'NPC influencer', icon: '🤳', group: 'npc', x: 560, y: 1120, w: 150, desc: 'Un NPC que escaló un poco: la agencia le paga por promocionar, y su audiencia (otros NPCs) compra lo que muestra → la plata vuelve a la empresa.', metrics: [['Cobra', '$0,5–10M/post']] },
   { id: 'juan', label: 'Juan · NPC ejemplo', icon: '🧍', group: 'npc', x: 950, y: 1500, w: 170, desc: 'Un NPC cualquiera. Gana $650.000 al mes. Trabaja, consume, cotiza y se endeuda — todo con el mismo sueldo.', metrics: [['Sueldo', '$650.000'], ['Le queda', '$90.000']] },
   { id: 'npcs', label: 'Los NPCs · millones', icon: '👥', group: 'npc', x: 1480, y: 1540, w: 180, desc: 'Todos los Juan juntos. Compran cada mes (no pueden parar). Su consumo obligatorio es la garantía real del crédito de las empresas.', metrics: [['DICOM', '4,2 millones']] },
-  { id: 'endeudados', label: 'NPCs endeudados', icon: '🪤', group: 'npc', x: 2000, y: 1640, w: 160, desc: 'Piden crédito para llegar a fin de mes y pagan interés al banco. El sueldo no alcanza a subir.', metrics: [['Cuota', '$45.000/mes']] },
+  { id: 'endeudados', label: 'NPCs endeudados', icon: '🪤', group: 'npc', x: 1700, y: 1680, w: 160, desc: 'Piden crédito para llegar a fin de mes y pagan interés al banco. El sueldo no alcanza a subir.', metrics: [['Cuota', '$45.000/mes']] },
 ];
 
 // ──────────────── CHAPTERS ────────────────
 const CHAPTERS: { id: string; label: string; note: string }[] = [
   { id: 'sueldo', label: '1 · El mes de un NPC', note: 'Juan gana $650.000. Al repartirlo, casi todo sale hacia empresas, la AFP y el banco — solo le quedan $90.000.' },
-  { id: 'empresa', label: '2 · De dónde sale la plata', note: 'El dinero entra por dos puertas: el Banco Central que presta a los bancos, y los recursos que se exportan. Las empresas piden crédito, RECUPERAN con ventas u obras, y DEVUELVEN el préstamo — por eso pueden pedir otro.' },
+  { id: 'empresa', label: '2 · De dónde sale la plata', note: 'Dos fuentes de dinero nuevo. ① El Banco Central crea dinero como deuda y se lo presta a los bancos, y los bancos a las empresas. ② Los recursos (cobre, litio) se exportan: entran dólares, una parte va al Estado (royalty) y otra a los bancos. Los bancos GANAN con la exportación: cambian esos dólares a pesos y se quedan una comisión (spread), y además prestan los depósitos a interés. Las empresas piden ese crédito, RECUPERAN con ventas u obras, y lo DEVUELVEN.' },
   { id: 'marketing', label: '3 · La cadena de marketing', note: 'Falabella paga $30M a la agencia → $3M al influencer (otro NPC) → él hace que los NPCs compren → vuelven $45M en ventas a Falabella.' },
-  { id: 'mio', label: '4 · Cómo me llega a MÍ', note: 'Tus apps cobran solo a NPCs ($45M + $20M/mes). Tu consultora le vende servicios a las empresas ($8M + $5M). Todo desemboca en ti — y ahí el banco te presta a ti ($200M).' },
+  { id: 'mio', label: '4 · Cómo me llega a MÍ', note: 'Tus apps cobran a los NPCs ($45M + $20M/mes) y el casino patrocina tu ShareBet ($5M). Tu consultora le vende servicios a las empresas ($8M + $5M). Todo desemboca en ti — y ahí el banco te presta a ti ($200M).' },
   { id: 'todo', label: '5 · El círculo completo', note: 'TODOS los agentes conectados. Toca cualquiera para ver sus montos. El dinero entra por el banco y los recursos, las empresas lo capturan, los NPCs lo devuelven comprando, y vuelve a empezar.' },
 ];
 
@@ -107,7 +108,7 @@ const FLOWS: Flow[] = [
   { from: 'cobre', to: 'export', amount: 'US$45.000M', kind: 'recurso', label: 'Codelco exporta cobre', ch: ['empresa', 'todo'] },
   { from: 'litio', to: 'export', amount: 'US$7.000M', kind: 'recurso', label: 'SQM exporta litio', ch: ['empresa', 'todo'] },
   { from: 'export', to: 'gobierno', amount: 'US$2.000M', kind: 'impuesto', label: 'Royalty + impuestos al Estado', ch: ['empresa', 'todo'] },
-  { from: 'export', to: 'bancos', amount: 'divisas US$', kind: 'recurso', label: 'Los dólares entran al sistema financiero', ch: ['todo'], curve: 0.4 },
+  { from: 'export', to: 'bancos', amount: 'comisión + presta', kind: 'recurso', label: 'El banco cambia los dólares del exportador a pesos (se queda la comisión / spread) y presta esos depósitos a interés. Así gana con cada exportación.', ch: ['empresa', 'todo'], curve: 0.4 },
   { from: 'cobre', to: 'npcs', amount: 'sueldos', kind: 'sueldo', label: 'La minería paga sueldos (altos)', ch: ['todo'], curve: 0.3 },
 
   // B — banca presta y cobra interés
@@ -180,6 +181,12 @@ const FLOWS: Flow[] = [
   { from: 'falabella', to: 'consultora', amount: '$8M', kind: 'mio', label: 'Falabella te paga por servicios / asesoría', ch: ['mio', 'todo'], curve: 0.3 },
   { from: 'cencosud', to: 'consultora', amount: '$5M', kind: 'mio', label: 'Cencosud te paga por servicios', ch: ['mio', 'todo'], curve: 0.3 },
   { from: 'consultora', to: 'tu', amount: '$10M/mes', kind: 'mio', label: 'Tu consultora desemboca en ti', ch: ['mio', 'todo'], width: 4 },
+
+  // K — el casino gana con los NPCs y me paga sponsorship (sostenible: la casa siempre gana)
+  { from: 'npcs', to: 'casino', amount: 'apuestas $90M', kind: 'consumo', label: 'Los NPCs apuestan y pierden (la casa siempre gana)', ch: ['mio', 'todo'], width: 4 },
+  { from: 'casino', to: 'npcs', amount: 'premios $60M', kind: 'sueldo', label: 'Paga algunos premios — menos de lo que recauda', ch: ['todo'], curve: 0.35 },
+  { from: 'casino', to: 'gobierno', amount: 'imp. juego', kind: 'impuesto', label: 'Impuesto al juego', ch: ['todo'], curve: 0.4 },
+  { from: 'casino', to: 'sharebet', amount: 'sponsorship $5M', kind: 'mio', label: 'El casino patrocina tu app ShareBet', ch: ['mio', 'todo'], width: 3 },
 ];
 
 // ──────────────── helpers ────────────────
@@ -295,8 +302,11 @@ export default function MapaFlujo() {
     drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y };
   };
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!drag.current) return;
-    setView((v) => ({ ...v, x: drag.current!.vx + (e.clientX - drag.current!.x), y: drag.current!.vy + (e.clientY - drag.current!.y) }));
+    const d = drag.current;
+    if (!d) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    setView((v) => ({ ...v, x: d.vx + dx, y: d.vy + dy }));
   };
   const onPointerUp = () => { drag.current = null; };
   const onWheel = (e: React.WheelEvent) => {

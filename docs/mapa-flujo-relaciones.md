@@ -32,7 +32,8 @@ la compra que genera (NPCs → empresa).
 | `gymapp` | Tu App · Gym | mio | Suscripción de miles de NPCs (**solo NPCs**) |
 | `sharebet` | Tu App · ShareBet | mio | NPCs pagan por usar la app (**solo NPCs**) |
 | `consultora` | Tu Consultora | mio | Le vende servicios/asesoría a las empresas (**B2B**) |
-| `tu` | TÚ (dueño) | mio | Recibe el flujo de tus negocios |
+| `casino` | Casino | empresa | Gana con las apuestas de los NPCs; te paga **sponsorship** |
+| `tu` | TÚ (dueño) | mio | Recibe el flujo de tus negocios. Tus negocios cuelgan **abajo a la derecha** |
 | `influencer` | NPC influencer | npc | NPC que escaló; lo paga la agencia |
 | `juan` | Juan · NPC ejemplo | npc | El NPC concreto ($650k/mes) |
 | `npcs` | Los NPCs · millones | npc | Todos los Juan juntos |
@@ -50,7 +51,7 @@ Formato: **origen → destino · tipo · monto · por qué · capítulos**
 3. `cobre → export` · recurso · **US$45.000M** · Codelco exporta cobre · `[empresa, todo]`
 4. `litio → export` · recurso · **US$7.000M** · SQM exporta litio · `[empresa, todo]`
 5. `export → gobierno` · impuesto · **US$2.000M** · royalty e impuestos a la exportación · `[empresa, todo]`
-6. `export → bancos` · recurso · **divisas US$** · los dólares entran al sistema financiero · `[todo]`
+6. `export → bancos` · recurso · **comisión + presta** · el banco cambia los dólares del exportador a pesos (se queda la comisión / spread FX) y presta esos depósitos a interés → **así gana con cada exportación** · `[empresa, todo]`
 7. `cobre → npcs` · sueldo · **sueldos minería** · la minería paga sueldos (altos) · `[todo]`
 
 ### B. Banca: presta a empresas y personas, cobra interés
@@ -138,6 +139,14 @@ Formato: **origen → destino · tipo · monto · por qué · capítulos**
 50. `falabella → consultora` · mío · **$8M** · Falabella te paga por servicios/asesoría · `[mio, todo]`
 51. `cencosud → consultora` · mío · **$5M** · Cencosud te paga por servicios · `[mio, todo]`
 52. `consultora → tu` · mío · **$10M/mes** · tu consultora desemboca en ti · `[mio, todo]`
+
+### K. El casino: gana con los NPCs y te paga sponsorship (sostenible)
+53. `npcs → casino` · consumo · **apuestas $90M** · los NPCs apuestan y pierden (la casa siempre gana) · `[mio, todo]`
+54. `casino → npcs` · sueldo · **premios $60M** · paga algunos premios, menos de lo que recauda · `[todo]`
+55. `casino → gobierno` · impuesto · **imp. juego** · impuesto al juego · `[todo]`
+56. `casino → sharebet` · mío · **sponsorship $5M** · el casino patrocina tu app ShareBet (y de ahí llega a ti) · `[mio, todo]`
+
+> Sostenibilidad del casino: recauda $90M en apuestas, paga $60M en premios + impuestos + sponsorship → le queda margen. La casa siempre gana.
 
 ---
 

@@ -189,6 +189,68 @@ const FLOWS: Flow[] = [
   { from: 'casino', to: 'sharebet', amount: 'sponsorship $5M', kind: 'mio', label: 'El casino patrocina tu app ShareBet', ch: ['mio', 'todo'], width: 3 },
 ];
 
+// ──────────────── QUÉ PUEDEN HACER LOS NPCs ────────────────
+const NPC_ACTIONS: { n: number; title: string; text: string }[] = [
+  {
+    n: 1,
+    title: 'Mover el consumo a empresas que pagan bien',
+    text: 'Dejar de comprarle a las que pagan el mínimo y gastar en pymes, cooperativas o empresas que pagan sueldos dignos. El dinero —y los créditos que vienen detrás— fluye hacia quien trata bien a sus trabajadores.',
+  },
+  {
+    n: 2,
+    title: 'Cortar la deuda de consumo cara',
+    text: 'No usar la tarjeta al 35%. Sin esa cuota, el NPC recupera $45k al mes y deja de financiar al banco. Si millones se desendeudan, el banco pierde su garantía: el consumo obligatorio.',
+  },
+  {
+    n: 3,
+    title: 'Comprar local y directo al productor',
+    text: 'Saltarse al intermediario que se queda el margen: ferias, la amasandería del barrio, productores directos. El dinero se queda circulando cerca y paga mejores sueldos en el barrio.',
+  },
+  {
+    n: 4,
+    title: 'Organizarse — un NPC solo no mueve nada',
+    text: 'Millones coordinados sí: sindicatos, cooperativas, compras colectivas. Suben el piso salarial y negocian desde la fuerza, no desde la necesidad.',
+  },
+  {
+    n: 5,
+    title: 'Pasar de NPC a dueño',
+    text: 'Aunque sea chico: montar algo por donde el dinero pase hacia ti (lo del resto del módulo). Dejar de ser solo el final del flujo.',
+  },
+  {
+    n: 6,
+    title: 'Exigir que el crédito vaya a producción',
+    text: 'Presionar para que los préstamos iniciales financien empresas que producen y pagan bien, no retail que solo revende lo importado y saca la plata del país.',
+  },
+];
+
+const NPC_CONSEQUENCES: { good: boolean; title: string; text: string }[] = [
+  {
+    good: false,
+    title: 'Falabella vende menos',
+    text: 'Sus ventas caen. El banco ve que ya no tiene la garantía (tu consumo obligatorio) y le presta menos o más caro. Se acaba el préstamo casi infinito y tiene que achicarse.',
+  },
+  {
+    good: true,
+    title: 'Las que pagan bien se vuelven las grandes',
+    text: 'Reciben el flujo, venden más, consiguen los créditos que antes iban a Falabella, contratan más gente y suben sueldos. El que paga bien ahora es el que crece.',
+  },
+  {
+    good: true,
+    title: 'El banco redirige el crédito',
+    text: 'El banco siempre presta donde está el consumo. Si el consumo se mueve, el crédito lo sigue: ahora financia a las empresas con ventas crecientes (las que pagan bien).',
+  },
+  {
+    good: true,
+    title: 'La AFP termina invirtiendo en las nuevas grandes',
+    text: 'Como compra acciones de las que más venden, deja de capitalizar a las extractivas y pasa a invertir en las empresas que pagan bien. Hasta tu fondo te empieza a convenir.',
+  },
+  {
+    good: true,
+    title: 'El sueldo sube sin pedirlo',
+    text: 'Al competir por trabajadores y por el consumo, el piso salarial sube solo. No se logró pidiéndolo ni con un bono: se logró moviendo a dónde va cada peso.',
+  },
+];
+
 // ──────────────── helpers ────────────────
 function entCenter(id: string) {
   const e = ENTITIES.find((x) => x.id === id)!;
@@ -511,6 +573,83 @@ export default function MapaFlujo() {
           el final del flujo (un NPC más) y montas algo —como una app— por donde ese mismo dinero pasa hacia ti.
         </p>
       </div>
+
+      {/* ─── QUÉ PUEDEN HACER LOS NPCs ─── */}
+      <section className="mt-14 pt-8 border-t border-[var(--border)]">
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)] mb-2">
+          El poder oculto del NPC
+        </div>
+        <h2 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
+          ¿Y qué pueden hacer los NPCs para vivir mejor?
+        </h2>
+        <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-7 max-w-3xl">
+          El mapa muestra algo que no es obvio: el poder real de los NPCs no está en su sueldo, está en su{' '}
+          <strong className="text-[var(--foreground)]">consumo</strong>. Cada peso que gastan decide qué empresa
+          crece, consigue créditos y se hace más grande. Las empresas existen porque alguien les compra — así que
+          si millones cambian a dónde va ese peso, el mapa entero se reordena.
+        </p>
+
+        {/* acciones */}
+        <h3 className="text-base font-bold text-[var(--foreground)] mb-3">Lo que pueden hacer</h3>
+        <div className="grid sm:grid-cols-2 gap-3 mb-9">
+          {NPC_ACTIONS.map((a) => (
+            <div key={a.n} className="flex gap-3 items-start p-4 rounded-xl" style={{ background: '#EAF3DE', border: '1px solid #3B6D11' }}>
+              <span className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-white text-sm font-extrabold" style={{ background: '#3B6D11' }}>
+                {a.n}
+              </span>
+              <div>
+                <h4 className="text-sm font-bold mb-0.5" style={{ color: '#0d2002' }}>{a.title}</h4>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#173404' }}>{a.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* consecuencias */}
+        <h3 className="text-base font-bold text-[var(--foreground)] mb-1.5">
+          ¿Qué le pasaría a Falabella y a las empresas que pagan poco?
+        </h3>
+        <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed mb-4 max-w-3xl">
+          El sistema no se rompe — se reordena. Si los NPCs mueven su consumo, se gatilla esta reacción en cadena:
+        </p>
+        <div className="space-y-2.5 mb-9">
+          {NPC_CONSEQUENCES.map((c, i) => (
+            <div
+              key={i}
+              className="flex gap-3 items-start p-4 rounded-xl"
+              style={{ background: c.good ? '#EAF3DE' : '#FCEBEB', border: `1px solid ${c.good ? '#3B6D11' : '#9e2626'}` }}
+            >
+              <span className="text-lg leading-none mt-0.5" style={{ color: c.good ? '#3B6D11' : '#9e2626' }}>
+                {c.good ? '↗' : '↘'}
+              </span>
+              <div>
+                <h4 className="text-sm font-bold mb-0.5" style={{ color: c.good ? '#0d2002' : '#420e0e' }}>{c.title}</h4>
+                <p className="text-[13px] leading-relaxed" style={{ color: c.good ? '#173404' : '#8c2020' }}>{c.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* clave */}
+        <div className="rounded-xl p-5" style={{ background: 'var(--keypoint-bg)', border: '1px solid var(--keypoint-border)' }}>
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--keypoint-text)' }}>
+            <strong>La clave:</strong> el sueldo no se sube pidiéndolo — se sube moviendo a dónde va el consumo. Quien
+            decide a quién comprarle, decide quién crece y quién consigue el crédito. El poder del NPC no está en su
+            pega, está en su billetera. Pero solo funciona <strong>coordinado con millones</strong>: un carrito no
+            cambia nada, un país eligiendo distinto cambia todo.
+          </p>
+        </div>
+
+        {/* realismo */}
+        <div className="mt-3 rounded-xl p-4" style={{ background: '#FEF3DA', border: '1px solid #d48a0a' }}>
+          <p className="text-[13px] leading-relaxed" style={{ color: '#6e3e08' }}>
+            <strong>Siendo realistas:</strong> no es mágico ni instantáneo. Requiere que existan alternativas reales,
+            que el NPC tenga algo de margen para elegir (el que vive al día compra lo más barato, no lo más justo) y,
+            sobre todo, coordinación masiva. Por eso en la historia esto funcionó con sindicatos fuertes + un Estado
+            que garantizó alternativas en salud, educación y vivienda — como en Escandinavia, Alemania o Corea del Sur.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

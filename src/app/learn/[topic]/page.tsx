@@ -2,6 +2,8 @@ import Link from 'next/link';
 import FloatingThemeToggle from '@/components/ui/FloatingThemeToggle';
 import CircuitoChile from '@/components/learn/CircuitoChile';
 import DiagramasEconomia from '@/components/learn/DiagramasEconomia';
+import MapaPosicion from '@/components/learn/MapaPosicion';
+import MapaFlujo from '@/components/learn/MapaFlujo';
 
 type ContentBlock =
   | { type: 'paragraph'; text: string }
@@ -1810,6 +1812,8 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
   const CUSTOM_TOPICS: Record<string, React.ReactNode> = {
     'circuito-chile': <CircuitoChile />,
     'diagramas-economia': <DiagramasEconomia />,
+    'mapa-posicion': <MapaPosicion />,
+    'mapa-flujo': <MapaFlujo />,
   };
 
   if (topic in CUSTOM_TOPICS) {

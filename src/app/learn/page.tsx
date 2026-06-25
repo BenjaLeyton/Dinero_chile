@@ -79,6 +79,20 @@ const topics = [
     era: 'Crisis financiera global',
   },
   {
+    id: 'mapa-flujo',
+    title: 'Mapa del Flujo del Dinero',
+    description: 'Mapa gigante navegable (pan + zoom) con todos los agentes: recursos, bancos, empresas, la cadena de marketing, tus apps y los NPCs — y cómo circula el dinero entre todos.',
+    icon: '🗺️',
+    era: 'Mapa interactivo · Chile',
+  },
+  {
+    id: 'mapa-posicion',
+    title: 'El Mapa del Dinero: ¿Dónde estás tú?',
+    description: 'Vista interactiva: cambia tu posición y mira cómo el dinero fluye hacia ti o lejos de ti — con números de Chile.',
+    icon: '🧭',
+    era: 'Interactivo · aplicado',
+  },
+  {
     id: 'circuito-chile',
     title: 'Circuito Económico: Chile',
     description: 'Cómo debería circular el dinero vs. cómo circula realmente — AFP, deuda, válvulas y la explosión.',

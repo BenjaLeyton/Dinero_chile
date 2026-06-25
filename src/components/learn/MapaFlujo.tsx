@@ -206,6 +206,25 @@ const OLIGO_WEB: { title: string; text: string }[] = [
   { title: 'El banco gana pase lo que pase', text: 'Le cobra interés a todas. No le importa cuál crece más: mientras el dinero circule entre ellas y siempre vuelva, sus intereses están asegurados.' },
 ];
 
+const OLIGO_MECHANISMS: { title: string; points: string[] }[] = [
+  {
+    title: 'Mecanismo 1 · Nadie paga al mismo tiempo — la deuda se renueva',
+    points: [
+      'Las deudas vencen en fechas distintas. En cualquier momento solo una parte está "por pagar", y la plata que circula justo ahí alcanza para cubrir ESA parte. No todas pagan a la vez.',
+      'Casi ninguna deuda grande se paga de verdad: se REFINANCIA — pides un préstamo nuevo para pagar el viejo. La deuda no se extingue, se traspasa hacia adelante en el tiempo.',
+      'Por eso todas SIEMPRE tienen deuda, pero el sistema nunca se traba: es una silla musical donde la música no para mientras siga entrando crédito nuevo al ritmo que vence el viejo.',
+    ],
+  },
+  {
+    title: 'Mecanismo 2 · Cuando una quiebra, su deuda se borra = dinero gratis',
+    points: [
+      'El préstamo creó dinero de la nada y esa plata YA se gastó: se volvió sueldos, compras, ingresos de otros. Sigue circulando en la economía.',
+      'Si el deudor quiebra y desaparece, la obligación se borra — pero el dinero que creó ya quedó suelto. Fue como imprimir dinero gratis y regalárselo a quienes alcanzaron a recibirlo.',
+      'El que se come la pérdida es el banco (esperaba que volviera); si son muchos, lo rescatan imprimiendo aún más. Ese "dinero gratis" que quedó circulando es parte de lo que paga el interés de los demás.',
+    ],
+  },
+];
+
 // ──────────────── QUÉ PUEDEN HACER LOS NPCs ────────────────
 const NPC_ACTIONS: { n: number; title: string; text: string }[] = [
   {
@@ -425,7 +444,7 @@ export default function MapaFlujo() {
 
   return (
     <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif' }}>
-      <h1 className="text-[28px] font-extrabold tracking-tight text-[var(--foreground)] mb-2">
+      <h1 className="text-[22px] sm:text-[28px] font-extrabold tracking-tight text-[var(--foreground)] mb-2">
         Mapa del flujo del dinero — Chile
       </h1>
       <p className="text-sm text-[var(--text-secondary)] mb-4 leading-relaxed max-w-3xl">
@@ -441,18 +460,19 @@ export default function MapaFlujo() {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
+        onPointerCancel={onPointerUp}
         onWheel={onWheel}
-        className={`relative overflow-hidden border border-[var(--border)] select-none ${expanded ? 'rounded-none' : 'rounded-2xl'}`}
-        style={{ height: expanded ? '100%' : 620, width: '100%', background: 'radial-gradient(circle at 30% 15%, #faf9f6 0%, #f0eee8 100%)', cursor: drag.current ? 'grabbing' : 'grab', touchAction: 'none' }}
+        className={`relative overflow-hidden border border-[var(--border)] select-none ${expanded ? 'rounded-none' : 'rounded-2xl h-[440px] sm:h-[620px]'}`}
+        style={{ height: expanded ? '100%' : undefined, width: '100%', background: 'radial-gradient(circle at 30% 15%, #faf9f6 0%, #f0eee8 100%)', cursor: drag.current ? 'grabbing' : 'grab', touchAction: expanded ? 'none' : 'pan-y' }}
       >
         {/* top control bar: chapters + note (stretches sideways across the width) */}
-        <div className="absolute top-3 left-3 right-16 z-30 bg-[var(--card)] border border-[var(--border)] rounded-xl px-3 py-2 shadow-md flex items-center gap-x-4 gap-y-2 flex-wrap">
+        <div className="absolute top-2 left-2 right-14 sm:top-3 sm:left-3 sm:right-16 z-30 bg-[var(--card)] border border-[var(--border)] rounded-xl px-2.5 py-2 shadow-md flex items-start sm:items-center gap-x-4 gap-y-2 flex-wrap">
           <div className="flex gap-1.5 flex-wrap shrink-0">
             {CHAPTERS.map((c) => (
               <button
                 key={c.id}
                 onClick={() => selectChapter(c.id)}
-                className="px-3 py-1.5 rounded-lg text-[11.5px] font-semibold border transition-all whitespace-nowrap"
+                className="px-2.5 py-1.5 rounded-lg text-[11px] sm:text-[11.5px] font-semibold border transition-all whitespace-nowrap"
                 style={{
                   background: chapter === c.id && !sel ? 'var(--foreground)' : 'transparent',
                   color: chapter === c.id && !sel ? 'var(--background)' : 'var(--text-secondary)',
@@ -464,7 +484,7 @@ export default function MapaFlujo() {
             ))}
           </div>
           {note && !sel && (
-            <p className="text-[12.5px] leading-snug text-[var(--foreground)] flex-1 min-w-[240px] border-l border-[var(--border)] pl-4">
+            <p className="text-[11.5px] sm:text-[12.5px] leading-snug text-[var(--foreground)] basis-full sm:basis-0 sm:flex-1 sm:min-w-[220px] border-t sm:border-t-0 sm:border-l border-[var(--border)] pt-2 sm:pt-0 sm:pl-4 max-h-20 sm:max-h-none overflow-y-auto">
               {note}
             </p>
           )}
@@ -596,7 +616,7 @@ export default function MapaFlujo() {
         <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)] mb-2">
           La deuda que se pagan entre ellos
         </div>
-        <h2 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
+        <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
           ¿Por qué el oligopolio nunca quiebra?
         </h2>
         <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-7 max-w-3xl">
@@ -614,7 +634,7 @@ export default function MapaFlujo() {
                 {s.n}
               </span>
               <div className="flex-1">
-                <div className="flex items-center justify-between gap-2 mb-0.5">
+                <div className="flex items-center justify-between gap-2 mb-0.5 flex-wrap">
                   <h4 className="text-sm font-bold text-[var(--foreground)]">{s.title}</h4>
                   <span className="text-sm font-extrabold px-2 py-0.5 rounded-md text-white whitespace-nowrap" style={{ background: s.color }}>
                     {s.money}
@@ -624,6 +644,51 @@ export default function MapaFlujo() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* la paradoja del interés */}
+        <div className="rounded-xl p-5 mb-9" style={{ background: '#FCEBEB', border: '1.5px solid #9e2626' }}>
+          <h3 className="text-base font-extrabold mb-1.5" style={{ color: '#420e0e' }}>
+            Espera — eso no cierra: ¿de dónde sale el interés?
+          </h3>
+          <p className="text-[13.5px] leading-relaxed mb-3" style={{ color: '#8c2020' }}>
+            Buena observación, y es <strong>EL</strong> punto. Si Falabella pidió $500M, Cencosud $600M y Copec $700M,
+            el banco creó <strong>$1.800M</strong>. Pero todas deben devolver con interés: juntas deben <strong>~$1.950M</strong>.
+            Faltan <strong>$150M que nunca se imprimieron</strong>. ¿Cómo pagan algo que no existe?
+          </p>
+          <div className="rounded-lg p-3.5 mb-3 bg-white/60" style={{ border: '1px solid #9e262633' }}>
+            <div className="space-y-1.5 text-[13px]" style={{ color: '#420e0e' }}>
+              <div className="flex justify-between gap-3"><span>Dinero que el banco creó (los 3 préstamos)</span><span className="font-bold font-mono">$1.800M</span></div>
+              <div className="flex justify-between gap-3"><span>Lo que deben devolver (con ~8% interés)</span><span className="font-bold font-mono">$1.950M</span></div>
+              <div className="flex justify-between gap-3 pt-1.5 border-t" style={{ borderColor: '#9e262633' }}><span className="font-bold">El interés que NO existe en el sistema</span><span className="font-extrabold font-mono" style={{ color: '#9e2626' }}>−$150M</span></div>
+            </div>
+          </div>
+          <p className="text-[13px] leading-relaxed mb-3" style={{ color: '#8c2020' }}>
+            La trampa no es que cada ronda alguien tenga que perder. Son <strong>dos mecanismos</strong> que hacen que
+            el sistema nunca se trabe aunque las cuentas no cierren:
+          </p>
+          <div className="grid sm:grid-cols-2 gap-2.5">
+            {OLIGO_MECHANISMS.map((m, i) => (
+              <div key={i} className="p-4 rounded-lg bg-white/60" style={{ border: '1px solid #9e262633' }}>
+                <h4 className="text-[13px] font-bold mb-1.5" style={{ color: '#420e0e' }}>{m.title}</h4>
+                <ul className="space-y-1.5">
+                  {m.points.map((p, j) => (
+                    <li key={j} className="text-[12.5px] leading-relaxed flex gap-1.5" style={{ color: '#8c2020' }}>
+                      <span style={{ color: '#9e2626' }}>•</span>
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <p className="text-[13px] leading-relaxed mt-3 font-semibold" style={{ color: '#420e0e' }}>
+            Conclusión: el sistema se sostiene por las dos cosas a la vez — la deuda se renueva eternamente (nunca se
+            paga, se traspasa) y los que quiebran inyectan dinero gratis al borrar su deuda. El oligopolio está primero
+            en la fila del crédito nuevo, así que renueva sin problema; los de abajo (pymes, NPCs en DICOM) son los que
+            quiebran y, sin saberlo, le regalan al sistema el dinero que faltaba. Crecer en deuda para siempre + un
+            goteo constante de quiebras abajo = la fórmula. No está roto: está diseñado así.
+          </p>
         </div>
 
         {/* la telaraña entre todas */}
@@ -673,7 +738,7 @@ export default function MapaFlujo() {
         <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)] mb-2">
           El poder oculto del NPC
         </div>
-        <h2 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
+        <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
           ¿Y qué pueden hacer los NPCs para vivir mejor?
         </h2>
         <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-7 max-w-3xl">

@@ -320,7 +320,11 @@ export default function MapaFlujo() {
   const [chapter, setChapter] = useState('sueldo');
   const [animate, setAnimate] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
   const drag = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
+  const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinch = useRef<{ dist: number; scale: number; cx: number; cy: number; vx: number; vy: number } | null>(null);
+  const viewRef = useRef(view);
   const [size, setSize] = useState({ w: 1000, h: 620 });
 
   useEffect(() => {
@@ -330,6 +334,7 @@ export default function MapaFlujo() {
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+  useEffect(() => { viewRef.current = view; }, [view]);
 
   const chapterEntities = useCallback((chId: string) => {
     const s = new Set<string>();
@@ -354,6 +359,7 @@ export default function MapaFlujo() {
   const selectChapter = (chId: string) => {
     setChapter(chId);
     setSel(null);
+    setPanelOpen(false);
     fitTo(chapterEntities(chId));
   };
 
@@ -385,19 +391,55 @@ export default function MapaFlujo() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
 
-  // pan / zoom
+  // pan (1 dedo) + pinch-zoom (2 dedos) + drag (mouse)
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y };
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 2) {
+      const pts = [...pointers.current.values()];
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+      const rect = wrapRef.current!.getBoundingClientRect();
+      const v = viewRef.current;
+      pinch.current = {
+        dist,
+        scale: v.scale,
+        cx: (pts[0].x + pts[1].x) / 2 - rect.left,
+        cy: (pts[0].y + pts[1].y) / 2 - rect.top,
+        vx: v.x,
+        vy: v.y,
+      };
+      drag.current = null;
+    } else {
+      const v = viewRef.current;
+      drag.current = { x: e.clientX, y: e.clientY, vx: v.x, vy: v.y };
+    }
   };
   const onPointerMove = (e: React.PointerEvent) => {
+    if (pointers.current.has(e.pointerId)) pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch.current && pointers.current.size >= 2) {
+      const pts = [...pointers.current.values()];
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+      const p = pinch.current;
+      const scale = Math.min(2.4, Math.max(0.2, p.scale * (dist / p.dist)));
+      const k = scale / p.scale;
+      setView({ scale, x: p.cx - (p.cx - p.vx) * k, y: p.cy - (p.cy - p.vy) * k });
+      return;
+    }
     const d = drag.current;
     if (!d) return;
-    const dx = e.clientX - d.x;
-    const dy = e.clientY - d.y;
-    setView((v) => ({ ...v, x: d.vx + dx, y: d.vy + dy }));
+    setView((v) => ({ ...v, x: d.vx + (e.clientX - d.x), y: d.vy + (e.clientY - d.y) }));
   };
-  const onPointerUp = () => { drag.current = null; };
+  const onPointerUp = (e: React.PointerEvent) => {
+    pointers.current.delete(e.pointerId);
+    if (pointers.current.size < 2) pinch.current = null;
+    if (pointers.current.size === 1) {
+      const [pt] = [...pointers.current.values()];
+      const v = viewRef.current;
+      drag.current = { x: pt.x, y: pt.y, vx: v.x, vy: v.y };
+    } else if (pointers.current.size === 0) {
+      drag.current = null;
+    }
+  };
   const onWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     const rect = wrapRef.current!.getBoundingClientRect();
@@ -454,16 +496,22 @@ export default function MapaFlujo() {
         onPointerCancel={onPointerUp}
         onWheel={onWheel}
         className={`overflow-hidden border-[var(--border)] select-none ${expanded ? 'fixed top-0 left-0 z-[9999] rounded-none border-0' : 'relative rounded-2xl border h-[440px] sm:h-[620px]'}`}
-        style={{ width: expanded ? '100vw' : '100%', height: expanded ? '100dvh' : undefined, background: 'radial-gradient(circle at 30% 15%, #faf9f6 0%, #f0eee8 100%)', cursor: drag.current ? 'grabbing' : 'grab', touchAction: expanded ? 'none' : 'pan-y' }}
+        style={{ width: expanded ? '100vw' : '100%', height: expanded ? '100dvh' : undefined, background: 'radial-gradient(circle at 30% 15%, #faf9f6 0%, #f0eee8 100%)', cursor: drag.current ? 'grabbing' : 'grab', touchAction: 'none' }}
       >
-        {/* top control bar: chapters + note (stretches sideways across the width) */}
-        <div className="absolute top-2 left-2 right-14 sm:top-3 sm:left-3 sm:right-16 z-30 bg-[var(--card)] border border-[var(--border)] rounded-xl px-2.5 py-2 shadow-md flex items-start sm:items-center gap-x-4 gap-y-2 flex-wrap">
-          <div className="flex gap-1.5 flex-wrap shrink-0">
+        {/* top control bar: capítulos en fila deslizable (móvil) + nota */}
+        <div
+          className="absolute top-2 left-2 right-14 sm:top-3 sm:left-3 sm:right-16 z-30 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-md"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <div
+            className="flex gap-1.5 overflow-x-auto px-2 pt-2 pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            style={{ touchAction: 'pan-x' }}
+          >
             {CHAPTERS.map((c) => (
               <button
                 key={c.id}
                 onClick={() => selectChapter(c.id)}
-                className="px-2.5 py-1.5 rounded-lg text-[11px] sm:text-[11.5px] font-semibold border transition-all whitespace-nowrap"
+                className="shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] sm:text-[11.5px] font-semibold border transition-all whitespace-nowrap"
                 style={{
                   background: chapter === c.id && !sel ? 'var(--foreground)' : 'transparent',
                   color: chapter === c.id && !sel ? 'var(--background)' : 'var(--text-secondary)',
@@ -475,14 +523,14 @@ export default function MapaFlujo() {
             ))}
           </div>
           {note && !sel && (
-            <p className="text-[11.5px] sm:text-[12.5px] leading-snug text-[var(--foreground)] basis-full sm:basis-0 sm:flex-1 sm:min-w-[220px] border-t sm:border-t-0 sm:border-l border-[var(--border)] pt-2 sm:pt-0 sm:pl-4 max-h-20 sm:max-h-none overflow-y-auto">
+            <p className="px-2.5 pb-2 text-[11px] sm:text-[12.5px] leading-snug text-[var(--foreground)] line-clamp-2 sm:line-clamp-none">
               {note}
             </p>
           )}
         </div>
 
         {/* zoom + expand controls */}
-        <div className="absolute top-3 right-3 z-30 flex flex-col gap-1.5">
+        <div className="absolute top-3 right-3 z-30 flex flex-col gap-1.5" onPointerDown={(e) => e.stopPropagation()}>
           <button onClick={toggleFullscreen} className="w-9 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] text-sm shadow-sm hover:bg-[var(--surface)]" title={expanded ? 'Salir de pantalla completa (Esc)' : 'Pantalla completa'}>{expanded ? '✕' : '⛶'}</button>
           <button onClick={() => zoomBtn(1.25)} className="w-9 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold shadow-sm hover:bg-[var(--surface)]">+</button>
           <button onClick={() => zoomBtn(0.8)} className="w-9 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold shadow-sm hover:bg-[var(--surface)]">−</button>
@@ -537,7 +585,12 @@ export default function MapaFlujo() {
             return (
               <button
                 key={e.id}
-                onClick={(ev) => { ev.stopPropagation(); setSel(isSel ? null : e.id); }}
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  if (sel !== e.id) { setSel(e.id); setPanelOpen(true); }
+                  else if (!panelOpen) { setPanelOpen(true); }
+                  else { setSel(null); setPanelOpen(false); }
+                }}
                 className="absolute rounded-2xl px-3 py-2 text-center transition-all"
                 style={{
                   left: e.x - w / 2,
@@ -559,12 +612,12 @@ export default function MapaFlujo() {
         </div>
 
         {/* detail panel */}
-        {selData && (
-          <div className="absolute bottom-3 left-3 z-30 w-[300px] max-w-[calc(100%-24px)] bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-xl">
+        {selData && panelOpen && (
+          <div className="absolute bottom-3 left-3 z-30 w-[300px] max-w-[calc(100%-24px)] bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-xl" onPointerDown={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-2xl">{selData.icon}</span>
               <span className="font-bold text-[15px]" style={{ color: GROUP[selData.group] }}>{selData.label}</span>
-              <button onClick={() => setSel(null)} className="ml-auto text-[var(--text-secondary)] hover:text-[var(--foreground)] text-sm">✕</button>
+              <button onClick={() => setPanelOpen(false)} className="ml-auto text-[var(--text-secondary)] hover:text-[var(--foreground)] text-sm">✕</button>
             </div>
             <p className="text-[12.5px] text-[var(--text-secondary)] leading-relaxed mb-2.5">{selData.desc}</p>
             {selData.metrics && selData.metrics.length > 0 && (
@@ -577,7 +630,7 @@ export default function MapaFlujo() {
                 ))}
               </div>
             )}
-            <div className="text-[11px] text-[var(--text-secondary)] border-t border-[var(--border)] pt-2">Mostrando solo los flujos de este agente. Toca de nuevo para soltar.</div>
+            <div className="text-[11px] text-[var(--text-secondary)] border-t border-[var(--border)] pt-2">La ✕ cierra esta ficha pero deja el agente seleccionado (sus flujos siguen aislados). Tócalo de nuevo para soltarlo.</div>
           </div>
         )}
 

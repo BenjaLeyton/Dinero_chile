@@ -366,28 +366,19 @@ export default function MapaFlujo() {
     }
   }, [size, fitTo, chapterEntities]);
 
-  // real browser fullscreen (like a YouTube video)
-  const toggleFullscreen = () => {
-    const el = wrapRef.current as (HTMLDivElement & { webkitRequestFullscreen?: () => void }) | null;
-    const doc = document as Document & { webkitFullscreenElement?: Element; webkitExitFullscreen?: () => void };
-    if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
-      (el?.requestFullscreen || el?.webkitRequestFullscreen)?.call(el);
-    } else {
-      (doc.exitFullscreen || doc.webkitExitFullscreen)?.call(doc);
-    }
-  };
-  // sync state with native fullscreen (covers Esc / native exit)
+  // pantalla completa por CSS overlay — funciona en TODOS los dispositivos (incl. iPhone,
+  // donde la Fullscreen API no sirve para divs). Adentro el pan/zoom queda 100% libre.
+  const toggleFullscreen = () => setExpanded((x) => !x);
+  // al expandir: bloquear el scroll del fondo y permitir salir con Esc
   useEffect(() => {
-    const doc = document as Document & { webkitFullscreenElement?: Element };
-    const onFs = () => setExpanded(!!(doc.fullscreenElement || doc.webkitFullscreenElement));
-    document.addEventListener('fullscreenchange', onFs);
-    document.addEventListener('webkitfullscreenchange', onFs);
-    return () => {
-      document.removeEventListener('fullscreenchange', onFs);
-      document.removeEventListener('webkitfullscreenchange', onFs);
-    };
-  }, []);
-  // refit when entering/leaving fullscreen (dimensions changed)
+    if (!expanded) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setExpanded(false); };
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+  }, [expanded]);
+  // reajustar el encuadre al entrar/salir de pantalla completa (cambian las dimensiones)
   useEffect(() => {
     const id = requestAnimationFrame(() => fitTo(chapterEntities(chapter)));
     return () => cancelAnimationFrame(id);
@@ -462,8 +453,8 @@ export default function MapaFlujo() {
         onPointerLeave={onPointerUp}
         onPointerCancel={onPointerUp}
         onWheel={onWheel}
-        className={`relative overflow-hidden border border-[var(--border)] select-none ${expanded ? 'rounded-none' : 'rounded-2xl h-[440px] sm:h-[620px]'}`}
-        style={{ height: expanded ? '100%' : undefined, width: '100%', background: 'radial-gradient(circle at 30% 15%, #faf9f6 0%, #f0eee8 100%)', cursor: drag.current ? 'grabbing' : 'grab', touchAction: expanded ? 'none' : 'pan-y' }}
+        className={`overflow-hidden border-[var(--border)] select-none ${expanded ? 'fixed top-0 left-0 z-[9999] rounded-none border-0' : 'relative rounded-2xl border h-[440px] sm:h-[620px]'}`}
+        style={{ width: expanded ? '100vw' : '100%', height: expanded ? '100dvh' : undefined, background: 'radial-gradient(circle at 30% 15%, #faf9f6 0%, #f0eee8 100%)', cursor: drag.current ? 'grabbing' : 'grab', touchAction: expanded ? 'none' : 'pan-y' }}
       >
         {/* top control bar: chapters + note (stretches sideways across the width) */}
         <div className="absolute top-2 left-2 right-14 sm:top-3 sm:left-3 sm:right-16 z-30 bg-[var(--card)] border border-[var(--border)] rounded-xl px-2.5 py-2 shadow-md flex items-start sm:items-center gap-x-4 gap-y-2 flex-wrap">

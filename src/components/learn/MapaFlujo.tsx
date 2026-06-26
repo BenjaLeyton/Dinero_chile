@@ -523,7 +523,10 @@ export default function MapaFlujo() {
             ))}
           </div>
           {note && !sel && (
-            <p className="px-2.5 pb-2 text-[11px] sm:text-[12.5px] leading-snug text-[var(--foreground)] line-clamp-2 sm:line-clamp-none">
+            <p
+              className="px-2.5 pb-2 text-[11px] sm:text-[12.5px] leading-snug text-[var(--foreground)] max-h-40 overflow-y-auto overscroll-contain"
+              style={{ touchAction: 'pan-y' }}
+            >
               {note}
             </p>
           )}
